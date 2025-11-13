@@ -28,9 +28,14 @@ class UserService {
       lastName
     });
 
-    const token = jwt.sign(
-      { id: newUser._id, email: newUser.email }, 
-      process.env.JWT_SECRET, 
+    const accessToken = jwt.sign(
+      { id: newUser._id, email: newUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+    const refreshToken = jwt.sign(
+      { id: newUser._id },
+      process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -43,7 +48,8 @@ class UserService {
         lastName: newUser.lastName,
         role: newUser.role
       },
-      token
+      token: accessToken,
+      refreshToken
     };
   }
 
@@ -63,9 +69,14 @@ class UserService {
 
     await userRepository.updateLastLogin(user._id);
 
-    const token = jwt.sign(
-      { id: user._id, email: user.email }, 
-      process.env.JWT_SECRET, 
+    const accessToken = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -78,7 +89,8 @@ class UserService {
         lastName: user.lastName,
         role: user.role
       },
-      token
+      token: accessToken,
+      refreshToken
     };
   }
 

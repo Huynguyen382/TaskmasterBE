@@ -7,12 +7,15 @@ const { requireAdmin, authorizeOwnerOrAdmin } = require('../middleware/authorize
 // Public routes
 router.post('/register', userController.registerUser);
 router.post('/login', userController.loginUser);
+router.post('/refresh', userController.refreshToken);
+router.post('/logout', userController.logout);
 
 // Protected routes
 router.use(auth); // Apply authentication to all routes below
 
-// GET all users (admin only)
-router.get('/', requireAdmin(), userController.getAllUsers);
+// GET all users (authenticated)
+// Admin sẽ nhận toàn bộ; user thường sẽ được lọc trong service
+router.get('/', userController.getAllUsers);
 
 // GET user by id (owner or admin)
 router.get('/:id', authorizeOwnerOrAdmin(), userController.getUserById);
